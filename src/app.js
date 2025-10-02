@@ -9,7 +9,7 @@ const app = express();
 
 // Middlewares
 app.use(cors());
-app.use(express.json()); // parse JSON body
+app.use(express.json()); 
 
 // Serve uploads folder statically
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -23,7 +23,7 @@ app.use('/api/images', imageRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
-  res.send('Photo Studio Admin Dashboard API running...');
+  res.send('.');
 });
 
 // Connect to MongoDB and start server

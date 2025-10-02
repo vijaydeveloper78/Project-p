@@ -17,14 +17,7 @@ exports.createImage = async (req, res) => {
   } catch (err) { res.status(500).json({ message: err.message }); }
 };
 
-exports.getAll = async (req, res) => {
-  const { category, status, page = 1, limit = 50 } = req.query;
-  const query = {};
-  if (category) query.category = category;
-  if (status) query.status = status;
-  const images = await Image.find(query).sort({ createdAt: -1 }).skip((page-1)*limit).limit(parseInt(limit));
-  res.json(images);
-};
+  
 exports.deleteImage = async (req, res) => {
   try {
     const img = await Image.findById(req.params.id);
@@ -40,13 +33,50 @@ exports.deleteImage = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
+ 
 
 exports.updateStatus = async (req, res) => {
   try {
-    const { status } = req.body;
-    if (!['active','inactive'].includes(status)) return res.status(400).json({ message: 'Bad status' });
-    const img = await Image.findByIdAndUpdate(req.params.id, { status }, { new: true });
+    const { status, category } = req.body;
+
+    if (status && !['active', 'inactive'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status value' });
+    }
+
+    // Build the update object dynamically
+    const updateData = {};
+    if (status) updateData.status = status;
+    if (category) updateData.category = category;
+ 
+    const img = await Image.findByIdAndUpdate(req.params.id, updateData, { new: true });
+
+    if (!img) {
+      return res.status(404).json({ message: 'Image not found' });
+    }
     res.json(img);
-  } catch (err) { res.status(500).json({ message: err.message }); }
+  } catch (err) {
+    console.error('Error updating image:', err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+exports.getAll = async (req, res) => {
+  const { category, status, page = 1, limit = 50 } = req.query;
+  const query = {};
+  if (category) query.category = category;
+  if (status) query.status = status;
+  const images = await Image.find(query).sort({ createdAt: -1 }).skip((page-1)*limit).limit(parseInt(limit));
+  res.json(images);
+};
+
+
+
+exports.userGetAll = async (req, res) => {
+  const { category, status, page = 1, limit = 50 } = req.query;
+  const query = {};
+  if (category) query.category = category;
+  if (status) query.status = status;
+  const images = await Image.find(query).sort({ createdAt: -1 }).skip((page-1)*limit).limit(parseInt(limit));
+  res.json(images);
 };
