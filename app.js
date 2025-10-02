@@ -15,8 +15,8 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Routes
-const authRoutes = require('./routes/authRoutes');
-const imageRoutes = require('./routes/imageRoutes');
+const authRoutes = require('./src/routes/authRoutes');
+const imageRoutes = require('./src/routes/imageRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/images', imageRoutes);
